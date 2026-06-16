@@ -1,0 +1,46 @@
+{{- if .Values.redisExporter.enabled }}
+---
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMServiceScrape
+metadata:
+  name: redis-exporter
+  namespace: monitoring
+  labels:
+    {{- include "monitoring-exporters.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: redis-exporter
+  endpoints:
+    - port: http
+      interval: 30s
+      scrapeTimeout: 10s
+      relabelConfigs:
+        - replacement: vcr-dr-hcm
+          targetLabel: cluster
+        - replacement: redis
+          targetLabel: job
+{{- end }}
+---
+{{- if .Values.pgpoolExporter.enabled }}
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMServiceScrape
+metadata:
+  name: pgpool-exporter
+  namespace: monitoring
+  labels:
+    {{- include "monitoring-exporters.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: pgpool-exporter
+  endpoints:
+    - port: http
+      interval: 30s
+      scrapeTimeout: 10s
+      relabelConfigs:
+        - replacement: vcr-dr-hcm
+          targetLabel: cluster
+        - replacement: pgpool
+          targetLabel: job
+{{- end }}
