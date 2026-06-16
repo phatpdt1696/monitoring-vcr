@@ -34,14 +34,18 @@ spec:
             httpGet:
               path: /metrics
               port: http
-            periodSeconds: 10
-            timeoutSeconds: 3
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 15
+            failureThreshold: 3
           readinessProbe:
             httpGet:
               path: /metrics
               port: http
-            periodSeconds: 10
-            timeoutSeconds: 1
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 3
           resources:
             {{- toYaml .Values.pgpoolExporter.resources | nindent 12 }}
 ---
