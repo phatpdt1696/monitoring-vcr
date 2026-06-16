@@ -1,0 +1,63 @@
+{{- if .Values.pgpoolExporter.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgpool-exporter
+  namespace: monitoring
+  labels:
+    app: pgpool-exporter
+    {{- include "monitoring-exporters.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgpool-exporter
+  template:
+    metadata:
+      labels:
+        app: pgpool-exporter
+    spec:
+      containers:
+        - name: exporter
+          image: {{ .Values.pgpoolExporter.image }}
+          env:
+            - name: DATA_SOURCE_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: pgpool-exporter-secret
+                  key: datasource
+          ports:
+            - containerPort: 9719
+              name: http
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 1
+          resources:
+            {{- toYaml .Values.pgpoolExporter.resources | nindent 12 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgpool-exporter
+  namespace: monitoring
+  labels:
+    app: pgpool-exporter
+    {{- include "monitoring-exporters.labels" . | nindent 4 }}
+spec:
+  selector:
+    app: pgpool-exporter
+  ports:
+    - name: http
+      port: 9719
+      targetPort: http
+{{- end }}

@@ -1,0 +1,58 @@
+postgresExporter:
+  enabled: true
+  image: quay.io/prometheuscommunity/postgres-exporter:v0.18.1
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
+  postgres:
+    username: postgres
+    password: "QMZhYmqe4v5q7yPK3kvoq84sCyIlcsWZ"
+    database: postgres
+    sslmode: disable
+    pods:
+      - name: pod0
+        host: harbor-postgres-v5-postgresql-ha-postgresql-0.harbor-postgres-v5-postgresql-ha-postgresql-headless.postgres-v5.svc.cluster.local
+        port: 5432
+      - name: pod1
+        host: harbor-postgres-v5-postgresql-ha-postgresql-1.harbor-postgres-v5-postgresql-ha-postgresql-headless.postgres-v5.svc.cluster.local
+        port: 5432
+      - name: pod2
+        host: harbor-postgres-v5-postgresql-ha-postgresql-2.harbor-postgres-v5-postgresql-ha-postgresql-headless.postgres-v5.svc.cluster.local
+        port: 5432
+
+redisExporter:
+  enabled: true
+  image: oliver006/redis_exporter:v1.67.0
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 25m
+      memory: 32Mi
+  redis:
+    host: harbor-redis.redis-new.svc.cluster.local
+    port: 6379
+    password: ""  # fill in redis password
+
+pgpoolExporter:
+  enabled: true
+  image: pgpool/pgpool2-exporter:latest
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 25m
+      memory: 32Mi
+  pgpool:
+    host: harbor-postgres-v5-postgresql-ha-pgpool.postgres-v5.svc.cluster.local
+    port: 9999
+    username: postgres
+    password: ""  # fill in pgpool postgres password
+    database: postgres
+    sslmode: disable

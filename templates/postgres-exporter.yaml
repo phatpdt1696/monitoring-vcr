@@ -1,0 +1,75 @@
+{{- if .Values.postgresExporter.enabled }}
+{{- range .Values.postgresExporter.postgres.pods }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-exporter-{{ .name }}
+  namespace: monitoring
+  labels:
+    app: postgres-exporter
+    pg-pod: {{ .name }}
+    {{- include "monitoring-exporters.labels" $ | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-exporter
+      pg-pod: {{ .name }}
+  template:
+    metadata:
+      labels:
+        app: postgres-exporter
+        pg-pod: {{ .name }}
+    spec:
+      containers:
+        - name: exporter
+          image: {{ $.Values.postgresExporter.image }}
+          args:
+            - --web.listen-address=:9187
+          env:
+            - name: DATA_SOURCE_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-exporter-secret
+                  key: datasource-{{ .name }}
+          ports:
+            - containerPort: 9187
+              name: http
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 1
+          resources:
+            {{- toYaml $.Values.postgresExporter.resources | nindent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-exporter-{{ .name }}
+  namespace: monitoring
+  labels:
+    app: postgres-exporter
+    pg-pod: {{ .name }}
+    {{- include "monitoring-exporters.labels" $ | nindent 4 }}
+spec:
+  selector:
+    app: postgres-exporter
+    pg-pod: {{ .name }}
+  ports:
+    - name: http
+      port: 9187
+      targetPort: http
+{{- end }}
+{{- end }}
