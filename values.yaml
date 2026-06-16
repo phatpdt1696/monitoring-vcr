@@ -41,7 +41,7 @@ redisExporter:
 
 pgpoolExporter:
   enabled: true
-  image: pgpool/pgpool2-exporter:latest
+  image: pgpool/pgpool2_exporter:latest
   resources:
     limits:
       cpu: 100m

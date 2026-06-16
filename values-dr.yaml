@@ -15,4 +15,4 @@ postgresExporter:
 pgpoolExporter:
   pgpool:
     host: harbor-postgres-v6-postgresql-ha-pgpool.postgres-v6.svc.cluster.local
-    password: ""  # fill in pgpool password
+    password: "QMZhYmqe4v5q7yPK3kvoq84sCyIlcsWZ"
