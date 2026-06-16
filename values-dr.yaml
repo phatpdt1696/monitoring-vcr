@@ -1,0 +1,18 @@
+postgresExporter:
+  postgres:
+    password: ""  # fill in postgres-v6 password
+    pods:
+      - name: pod0
+        host: harbor-postgres-v6-postgresql-ha-postgresql-0.harbor-postgres-v6-postgresql-ha-postgresql-headless.postgres-v6.svc.cluster.local
+        port: 5432
+      - name: pod1
+        host: harbor-postgres-v6-postgresql-ha-postgresql-1.harbor-postgres-v6-postgresql-ha-postgresql-headless.postgres-v6.svc.cluster.local
+        port: 5432
+      - name: pod2
+        host: harbor-postgres-v6-postgresql-ha-postgresql-2.harbor-postgres-v6-postgresql-ha-postgresql-headless.postgres-v6.svc.cluster.local
+        port: 5432
+
+pgpoolExporter:
+  pgpool:
+    host: harbor-postgres-v6-postgresql-ha-pgpool.postgres-v6.svc.cluster.local
+    password: ""  # fill in pgpool password
